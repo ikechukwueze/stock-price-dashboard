@@ -1,0 +1,207 @@
+{% extends 'stockanalytics/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+    <main id='main-content'>
+        <div class="container-fluid">
+            
+            
+            <form class="border-bottom mt-4 mb-4 pb-2" method="POST" action="add_stock">
+                {% csrf_token %}
+                <div class="form-row justify-content-end">
+                  <div class="col-xs-12 col-md-6 col-xl-4 my-1">
+                    <select class="custom-select mr-1" name='selected' id="inlineFormCustomSelect" >
+                        <option  >Select stock ticker to add, e.g TSLA </option>
+                        {% for symbol in stock_symbols %}
+                            <option value="{{symbol.stock_symbol}}"> {{symbol.stock_symbol}} </option>
+                        {% endfor %}
+                    </select>
+                  </div>
+
+                  <div class="col-xs-6 col-md-3 col-xl-1 my-1">
+                    <input class="form-control mb-2 mr-1 date-input" id="date" name="start_date" required placeholder="From..." type="text"/>
+                  </div>
+                  
+                  <!--
+                  <div class="col-md-4 col-xl-1 my-1">
+                    <input class="form-control mb-2 mr-1 date-input" id="date2" name="end_date"  required placeholder="End Date" type="text"/>
+                  </div>
+                    -->
+                  
+                  <div class="col-xs-6 col-md-3 col-xl-1 my-1">
+                    <button id='filter_button' style="width: 100%"="submit" class="btn btn-primary" >Add</button>
+                  </div>
+                  
+                </div>
+              </form>
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert {{message.tags}}" role="alert">
+                    {{message}}
+                </div>
+                {% endfor %}
+            {% endif %}
+            <div class="row  justify-content-start ">
+                {% for data in user_data %}
+                <div class="col-xl-2 col-md-4 stock_cards" data-id= {{ data.id }} >
+                    <div class="card mb-3">
+                        <div class="card-body" style="cursor: pointer;">
+                            <div class="row mb-3">
+                                <div class="col stock-name">
+                                    <h5 class="card-title mb-0">{{data.name}}</h5>
+                                </div>
+                                <div class="col-auto">
+                                    
+                                </div>
+                            </div>
+                            
+                            <h3 class="mt-1 mb-3 ">${{data.latest_data.price}}</h3>
+
+                            <div class="mb-1">
+                                <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> Price @ </span>
+                                <span class="text-muted ">{{ data.latest_data.time}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="row mb-3 ml-1">
+                <a href="/refresh" class="badge badge-primary">Refresh</a>
+            </div>
+
+            
+                
+            <div>
+                <div class="row" >
+                    <div class="col-xl-6">
+                        <div class="card bg-light mb-4">
+                            <div class="card-header text-center" id="line_chart_name">
+                                <i class="fas fa-chart-area mr-1"></i>
+                                {{ user_data.0.name }}
+                            </div>
+                            <div class="card-body"><canvas id="mylinechart" class="chart_canvas" width="100%" height="40"></canvas></div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="card bg-light mb-4">
+                            <div class="card-header text-center" id="bar_chart_name">
+                                <i class="fas fa-chart-bar mr-1"></i>
+                                {{ user_data.0.name }}
+                            </div>
+                            <div class="card-body"><canvas id="mybarchart" class="chart_canvas" width="100%" height="40"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <!-- Delete Data Modal -->
+            <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Delete Stock Records</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/delete_stocks">
+                            {% csrf_token %}
+                            <ul class="list-group">
+                                {% for data in user_data %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                  {{data.name}}
+                                  <span>
+                                    <input type="checkbox" class="" id="exampleCheck1" name="check-box-item" value={{data.name}}>
+                                  </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    
+                </div>
+                </div>
+            </div>
+
+
+            <!-- Export Data Modal -->
+            <div class="modal fade" id="export_data" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Export Data</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="POST" action="/export_data">
+                            {% csrf_token %}
+                            <ul class="list-group">
+                                {% for data in user_data %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                  {{data.name}}
+                                  <span>
+                                    <input type="radio" class="" id="exampleCheck2" name="check-box-item" value={{data.name}}>
+                                  </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary mt-2">Submit</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    
+                </div>
+                </div>
+            </div>
+
+
+
+
+  
+
+ 
+            <div class="row">
+                <div class="col-xl-12">
+                    <form class="form-inline d-flex justify-content-center" id='filter_form' action="">
+                        <div class=" mb-2">
+                            <select class="custom-select mr-1" name='selected' required id="inlineFormCustomSelect">
+                                <option selected >Choose...</option>
+                                
+                                {% for data in user_data %}
+                                    <option value="{{ data.name }}"> {{ data.name }} </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <input class="form-control mb-2 mr-1 date-input" id="date" name="start_date" required placeholder="Start Date" type="text"/>
+                        <input class="form-control mb-2 mr-1 date-input" id="date2" name="end_date"  required placeholder="End Date" type="text"/>                        
+                      
+                        <button id='filter_button' type="submit" class="btn btn-primary mb-2" style="padding: 4px 6px;">Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+ 
+
+    
+ 
+
+{% endblock %}
+
