@@ -179,8 +179,8 @@
                 <div class="col-xl-12">
                     <form class="form-inline d-flex justify-content-center" id='filter_form' action="">
                         <div class=" mb-2">
-                            <select class="custom-select mr-1" name='selected' required id="inlineFormCustomSelect">
-                                <option selected >Choose...</option>
+                            <select class="custom-select mr-1" name='selected' id="inlineFormCustomSelect" required>
+                                <option value="">Choose...</option>
                                 
                                 {% for data in user_data %}
                                     <option value="{{ data.name }}"> {{ data.name }} </option>

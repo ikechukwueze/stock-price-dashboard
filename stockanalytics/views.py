@@ -39,7 +39,7 @@ def dashboard(request):
 	context['user_data'] = []
 
 	user_tickers = list(eod_stock_price.objects.filter(user=request.user).values_list('ticker', flat=True).distinct())
-	print(user_tickers)
+	#print(user_tickers)
 
 	i = 0
 	
@@ -210,6 +210,22 @@ def add_stock(request):
 
 				for s in data:
 					stock_data = eod_stock_price()
+
+					if not eod_stock_price.objects.filter(user=request.user, ticker=s['symbol'], date=s['date'].split('T')[0]).exists():
+						#print('doesnt exist')
+						stock_data.high = s['high']
+						stock_data.low = s['low']
+						stock_data.opening_price = s['open']
+						stock_data.closing_price = s['close']
+						stock_data.date = s['date'].split('T')[0]
+						stock_data.ticker = s['symbol']
+						stock_data.user = request.user
+						
+
+						stock_data.save()
+						#print('saving stock data')
+
+					"""
 					try:
 						print('doing a check')
 						check = eod_stock_price.objects.get(user=request.user, ticker=s['symbol'], date=s['date'].split('T')[0])
@@ -225,6 +241,7 @@ def add_stock(request):
 
 						stock_data.save()
 						#print(s['high'], 'saved')
+					"""
 
 				
 				price_time = get_stock_price(ticker)
