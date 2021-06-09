@@ -11,17 +11,21 @@
             <form class="border-bottom mt-4 mb-4 pb-2" method="POST" action="add_stock">
                 {% csrf_token %}
                 <div class="form-row justify-content-end">
+                    
                   <div class="col-xs-12 col-md-6 col-xl-4 my-1">
+                      
                     <select class="custom-select mr-1" name='selected' id="inlineFormCustomSelect" >
-                        <option  >Select stock ticker to add, e.g TSLA </option>
+                        <option  >Get historical data. Select stock to add, e.g TSLA </option>
                         {% for symbol in stock_symbols %}
                             <option value="{{symbol.stock_symbol}}"> {{symbol.stock_symbol}} </option>
                         {% endfor %}
                     </select>
+                    
                   </div>
 
                   <div class="col-xs-6 col-md-3 col-xl-1 my-1">
-                    <input class="form-control mb-2 mr-1 date-input" id="date" name="start_date" required placeholder="From..." type="text"/>
+                    <input class="form-control mb-2 mr-1 date-input" id="date" name="start_date" data-toggle="tooltip" data-placement="bottom" title="Data from yesterday's date to 1 year back" required placeholder="From..." type="text"/>
+                    
                   </div>
                   
                   <!--
@@ -61,7 +65,7 @@
 
                             <div class="mb-1">
                                 <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> Price @ </span>
-                                <span class="text-muted ">{{ data.latest_data.time}}</span>
+                                <span class="text-muted ">{{ data.latest_data.time}} </span>
                             </div>
                         </div>
                     </div>

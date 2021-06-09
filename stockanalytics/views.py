@@ -26,6 +26,8 @@ from djqscsv import render_to_csv_response
 
 
 api_key = '808a4a6d2e2eff1e4ec4a91be5a03807'
+#api_key = '4C3TN4PJPEIT9AW0'
+#https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&outputsize=full&apikey=key
 from requests import get
 
 

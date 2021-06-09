@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-zcqpz&y%dj&j-$k$=o)5p-h+!o1*f6cmd&@f1voz23q!(#zc-d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['stockpricedashboard.azurewebsites.net']
+ALLOWED_HOSTS = ['stockpricedashboard.azurewebsites.net', 'localhost']
 #ALLOWED_HOSTS = ['*']
 
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'stockanalytics',
     'import_export',
     'crispy_forms',
+    'django_crontab',
     
 ]
 
