@@ -210,6 +210,25 @@ def add_stock(request):
 				api_response = get(url).json()
 				data = api_response['data']
 
+
+				price_time = get_stock_price(ticker)
+				print('printing price and time next')
+
+				
+
+				current_price = intraday_stock_price()
+				current_price.ticker = ticker
+				current_price.price = Decimal(price_time[0].replace("," , ""))
+				current_price.datetime = price_time[1]
+				current_price.user = request.user
+				print('intra_day_save?')
+				current_price.save()
+				print('intra_day_savd')
+				print(intraday_stock_price.objects.filter(user=request.user, ticker=ticker))
+
+				
+
+
 				for s in data:
 					stock_data = eod_stock_price()
 
@@ -227,41 +246,10 @@ def add_stock(request):
 						stock_data.save()
 						#print('saving stock data')
 
-					"""
-					try:
-						print('doing a check')
-						check = eod_stock_price.objects.get(user=request.user, ticker=s['symbol'], date=s['date'].split('T')[0])
-						print('check failed', check.date)
-					except:
-						stock_data.high = s['high']
-						stock_data.low = s['low']
-						stock_data.opening_price = s['open']
-						stock_data.closing_price = s['close']
-						stock_data.date = s['date'].split('T')[0]
-						stock_data.ticker = s['symbol']
-						stock_data.user = request.user
-
-						stock_data.save()
-						#print(s['high'], 'saved')
-					"""
-
-				
-				price_time = get_stock_price(ticker)
-				print('printing price and time next')
-
-				
-
-				current_price = intraday_stock_price()
-				current_price.ticker = ticker
-				current_price.price = Decimal(price_time[0].replace("," , ""))
-				current_price.datetime = price_time[1]
-				current_price.user = request.user
-				print('intra_day_save?')
-				current_price.save()
-				print('intra_day_savd')
-				print(intraday_stock_price.objects.filter(user=request.user, ticker=ticker))
 
 				messages.success(request, "Data successfully added.")
+				
+				
 				
 				return redirect('/')
 			
