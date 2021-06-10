@@ -14,8 +14,8 @@
                     
                   <div class="col-xs-12 col-md-6 col-xl-4 my-1">
                       
-                    <select class="custom-select mr-1" name='selected' id="inlineFormCustomSelect" >
-                        <option  >Get historical data. Select stock to add, e.g TSLA </option>
+                    <select class="custom-select mr-1" name='selected'  id="inlineFormCustomSelect" required>
+                        <option value="" >Get historical data. Select stock to add, e.g TSLA </option>
                         {% for symbol in stock_symbols %}
                             <option value="{{symbol.stock_symbol}}"> {{symbol.stock_symbol}} </option>
                         {% endfor %}
@@ -65,7 +65,7 @@
 
                             <div class="mb-1">
                                 <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i> Price @ </span>
-                                <span class="text-muted ">{{ data.latest_data.time}} </span>
+                                <span class="text-muted ">{{ data.latest_data.time}} <small>gmt</small></span>
                             </div>
                         </div>
                     </div>

@@ -178,25 +178,31 @@ def add_stock(request):
 		#end_date = request.POST['end_date']
 		ticker = request.POST['selected']
 
+
+		date_format = '%Y-%m-%d'
+		todays_date = datetime.date.today()
+		yesterday = todays_date - datetime.timedelta(days=1)
+		start_date_datetime = datetime.datetime.strptime(start_date, date_format)
+		#end_date_datetime = datetime.datetime.strptime(end_date, date_format)
+		
+
+		#if (start_date_datetime >= end_date_datetime) or (start_date_datetime > today_datetime):
+		#	messages.error(request, 'Invalid dates.')
+		#	return redirect('/')
+
+		if start_date_datetime.date() > yesterday:
+			messages.error(request, "End of Day data available from yesterday's date")
+			return redirect('/')
+
+		#if start_date_datetime < end_date_datetime > today_datetime:
+		#	end_date = datetime.datetime.strftime(today_datetime, date_format)
+		#print('date check passed')
+
+		
+
 		if not eod_stock_price.objects.filter(user=request.user, ticker=ticker).exists():
 
-			date_format = '%Y-%m-%d'
-			today_datetime = datetime.datetime.today()
-			start_date_datetime = datetime.datetime.strptime(start_date, date_format)
-			#end_date_datetime = datetime.datetime.strptime(end_date, date_format)
 			
-
-			#if (start_date_datetime >= end_date_datetime) or (start_date_datetime > today_datetime):
-			#	messages.error(request, 'Invalid dates.')
-			#	return redirect('/')
-
-			if start_date_datetime > today_datetime:
-				messages.error(request, 'Invalid date.')
-				return redirect('/')
-
-			#if start_date_datetime < end_date_datetime > today_datetime:
-			#	end_date = datetime.datetime.strftime(today_datetime, date_format)
-			#print('date check passed')
 
 
 			
@@ -362,7 +368,7 @@ def get_stock_price(ticker):
 	price = f.get_text()
 
 	from datetime import datetime
-	now = datetime.now()
+	now = datetime.utcnow()
 	#t = datetime.strftime(now, '%H:%M %d-%m-%y')
 	return [price, now]
 
