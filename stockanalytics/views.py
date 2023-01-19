@@ -76,16 +76,6 @@ def dashboard(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
 def register_page(request):
 	if request.method == "POST":
 		form = NewUserForm(request.POST)
@@ -166,10 +156,6 @@ def filter_chart(request):
 			return JsonResponse({'response': {'name':selected, 'graph_labels': graph_labels, 'graph_data' : graph_data, 'bar_labels': barchart_labels, 'bar_data': barchart_data }}, status = 200)
 
 
-		
-
-
-
 
 def add_stock(request):
 	if request.method == "POST":
@@ -201,11 +187,6 @@ def add_stock(request):
 		
 
 		if not eod_stock_price.objects.filter(user=request.user, ticker=ticker).exists():
-
-			
-
-
-			
 			#url = 'http://api.marketstack.com/v1/eod?access_key={}&symbols={}&date_from={}&date_to={}&limit=1000'.format(api_key, ticker, start_date, end_date)
 			
 			url = 'http://api.marketstack.com/v1/eod?access_key={}&symbols={}&date_from={}&limit=1000'.format(api_key, ticker, start_date)
